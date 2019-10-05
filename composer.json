@@ -1,0 +1,38 @@
+{
+  "name": "lum/lum-framework",
+  "description": "Lum App Framework",
+  "license": "MIT",
+  "authors":
+  [
+    {
+      "name": "Timothy Totten",
+      "email": "supernovus@gmail.com",
+      "role": "Original Author"
+    }
+  ],
+  "require":
+  {
+    "php": "^7.0",
+    "lum/lum-core": "^1.2 || dev-master",
+    "lum/lum-html": "^1.0 || dev-master",
+    "lum/lum-mailer": "^1.0 || dev-master",
+    "lum/lum-uimsg": "^1.0 || dev-master",
+    "lum/lum-db": "^1.0 || dev-master"
+  },
+  "require-dev":
+  {
+    "lum/lum-test": "^2.1 || dev-master",
+    "ext-PDO": "*"
+  },
+  "autoload":
+  {
+    "psr-4":
+    {
+      "Lum\\": "lib"
+    }
+  },
+  "scripts":
+  {
+    "test": "lumtest"
+  }
+}

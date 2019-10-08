@@ -60,6 +60,21 @@ abstract class Basic
   protected $layout;
 
   /**
+   * Should we enable the IE JSON output hack?
+   */
+  protected $json_ie_support = true;
+
+  /**
+   * Should we enable the IE cache output hack?
+   */
+  protected $cache_ie_support = true;
+
+  /**
+   * Should we use text/xml instead of application/xml?
+   */
+  protected $use_xml_text = false;
+
+  /**
    * When using the send_json() method, this defines a method name in an object
    * that can be used to convert the object to JSON.
    */
@@ -488,7 +503,8 @@ abstract class Basic
   public function send_json ($data, $opts=[])
   { 
     $core = \Lum\Core::getInstance();
-    $core->pragmas['json no-cache'];    // Don't cache this.
+    $core->output->json($this->json_ie_support);
+    $core->output->nocache($this->cache_ie_support);
 
     $json_opts = 0;
     if 
@@ -556,7 +572,8 @@ abstract class Basic
   public function send_xml ($data, $opts=[])
   {
     $core = \Lum\Core::getInstance();
-    $core->pragmas['xml no-cache'];
+    $core->output->xml($this->use_xml_text);
+    $core->output->nocache($this->cache_ie_support);
 
     $fancy = isset($opts['fancy']) 
            ? (bool)$opts['fancy'] 

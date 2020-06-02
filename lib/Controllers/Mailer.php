@@ -13,6 +13,8 @@ trait Mailer
 {
   protected function __init_mailer_controller ($opts)
   {
+    if (isset($core->mail_messages)) { return; } // Sanity check.
+
     $core = \Lum\Core::getInstance();
     if (property_exists($this, 'email_path'))
     {

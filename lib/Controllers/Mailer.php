@@ -13,9 +13,9 @@ trait Mailer
 {
   protected function __init_mailer_controller ($opts)
   {
+    $core = \Lum\Core::getInstance();
     if (isset($core->mail_messages)) { return; } // Sanity check.
 
-    $core = \Lum\Core::getInstance();
     if (property_exists($this, 'email_path'))
     {
       if (is_array($this->email_path))

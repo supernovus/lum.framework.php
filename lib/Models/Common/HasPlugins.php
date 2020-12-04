@@ -14,7 +14,7 @@ const PLUGINS_DEFAULT_LOADER = "models";
  * be in the Models loader in a nested namespace (which by default
  * is the loaded id of the current model, so if your model is 'users'
  * and you are trying to load a plugin called 'manager' then it would
- * call $core->model('users.manager')). The latter is the default behaviour.
+ * call $core->models->load('users.manager')). 
  */
 trait HasPlugins
 {

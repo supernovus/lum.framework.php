@@ -2,6 +2,8 @@
 
 namespace Lum\Models\Common;
 
+// TODO: Support multiple user tokens.
+
 trait Auth_Tokens
 {
   abstract public function getToken ($id);
@@ -16,9 +18,18 @@ trait Auth_Tokens
 
   public $errors        = [];
 
-  public $format_string = '01';
-
   public $default_expire = 0;
+
+  /**
+   * Get the current format code.
+   *
+   * Currently hard coded as we only support one format, this is mostly
+   * reserved for future extensions.
+   */
+  public function formatCode ($opts=null)
+  {
+    return '01';
+  }
 
   /**
    * Get an Auth Token for the given App Token.
@@ -27,11 +38,12 @@ trait Auth_Tokens
   {
     $bits = $this->parseToken($appToken);
     if (!isset($bits)) return; // invalid token.
+    $format = $this->formatCode();
     $sid = $bits[0];
     $ahash = $bits[1];
     $uhash = $this->authHash($sid, $ahash);
     $len = sprintf('%02d', strlen($sid));
-    $token = $this->format_string . $len . $sid . $uhash;
+    $token = $format . $len . $sid . $uhash;
     return $token;
   }
 
@@ -44,12 +56,15 @@ trait Auth_Tokens
   }
 
   /**
-   * Get the 'sid' and 'hash' from a token.
+   * Get the 'sid', 'hash', and 'format' from a token.
+   *
+   * @return array  An array with sid, hash, and format in that order.
    */
   public function parseToken ($token)
   {
     $format = substr($token, 0, 2);
-    if ($format != $this->format_string)
+    $validf = $this->formatCode();
+    if ($format != $validf)
     {
       $this->errors[] = 'invalid_format';
       return;
@@ -63,7 +78,7 @@ trait Auth_Tokens
     $sid = substr($token, 4, $len);
     $offset = $len + 4;
     $hash = substr($token, $offset);
-    return [$sid, $hash];
+    return [$sid, $hash, $format];
   }
 
   /**
@@ -121,7 +136,7 @@ trait Auth_Tokens
       $def = [$ucol=>$uid];
     }
     elseif (is_array($def) && isset($def[$ucol]))
-    {
+    { // A simple array of properties.
       $uid = $def[$ucol];
       if (is_object($uid) && is_callable([$uid, 'get_id']))
       { // It's an object, convert it to a uid.
@@ -133,6 +148,7 @@ trait Auth_Tokens
     {
       throw new \Exception("Invalid user sent to newToken()");
     }
+
     $ecol = $this->expire_field;
     if (isset($def[$ecol]))
     { 

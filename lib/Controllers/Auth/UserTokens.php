@@ -8,6 +8,9 @@ namespace Lum\Controllers\Auth;
  * Add to controllers which should be able to manage tokens for users.
  *
  * Requires the JsonResponse and Auth traits to be included as well.
+ *
+ * TODO: Multiple user tokens for different devices/apps.
+ *       Will require some API additions and modifications.
  */
 trait UserTokens
 {

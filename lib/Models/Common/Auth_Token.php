@@ -14,7 +14,7 @@ trait Auth_Token
    */
   public function appToken ($user=null)
   {
-    $token = $this->parent->format_string;
+    $token = $this->parent->formatCode();
     $sid = $this->tokenId();
     $len = sprintf('%02d', strlen($sid));
     $token .= $len;

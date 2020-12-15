@@ -13,7 +13,7 @@
   "require":
   {
     "php": "^7.0",
-    "lum/lum-core": "^1.2 || dev-master",
+    "lum/lum-core": "^1.5 || dev-master",
     "lum/lum-html": "^1.0 || dev-master",
     "lum/lum-mailer": "^1.0 || dev-master",
     "lum/lum-uimsg": "^1.0 || dev-master",

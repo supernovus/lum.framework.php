@@ -24,7 +24,8 @@ use Lum\Exception;
  */
 abstract class Basic 
 {
-  use \Lum\Meta\ClassID;  // Adds $__classid and class_id()
+  use \Lum\Meta\ClassID,   // Adds $__classid and class_id()
+      \Lum\Meta\HasProps;  // Adds get_prop() and set_prop()
 
   /**
    * Any models we have loaded.
@@ -319,38 +320,6 @@ abstract class Basic
   protected function wants ($constructor, $opts=[], $fullname=False)
   {
     return $this->needs($constructor, $opts, $fullname, true);
-  }
-
-  /**
-   * If a property exists, return it's value, otherwise return a default.
-   *
-   * @param string $property  The property we are looking for.
-   * @param mixed $default  (Optional, default null) The default value.
-   * @return mixed
-   */
-  public function get_prop ($property, $default=Null)
-  {
-    if (property_exists($this, $property))
-      return $this->$property;
-    else
-      return $default;
-  }
-
-  /**
-   * Set a property if it exists.
-   *
-   * @param string $property  The property we want to set if it exists.
-   * @param mixed $value  The value we want to set the property to.
-   * @return bool  Did the property exist?
-   */
-  public function set_prop ($property, $value)
-  {
-    if (property_exists($this, $property))
-    {
-      $this->$property = $value;
-      return true;
-    }
-    return false;
   }
 
   /**

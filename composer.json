@@ -17,7 +17,8 @@
     "lum/lum-html": "^1.0 || dev-master",
     "lum/lum-mailer": "^1.0 || dev-master",
     "lum/lum-uimsg": "^1.0 || dev-master",
-    "lum/lum-db": "^1.0 || dev-master"
+    "lum/lum-db": "^1.0 || dev-master",
+    "lum/lum-text": "^1.2 || dev-master"
   },
   "require-dev":
   {

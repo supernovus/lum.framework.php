@@ -138,6 +138,12 @@ class ParamGroup
   public $show_label_in_help = false;
 
   /**
+   * When using chaining methods, if no 'mandatory' value is specified,
+   * this will be used as the default value.
+   */
+  public $default_mandatory = false;
+
+  /**
    * The formatting plugin used to render the ParamGroup help/usage text.
    *
    * Can either be an object extending \Lum\CLI\ParamGroup\Format,
@@ -236,10 +242,30 @@ class ParamGroup
   }
 
   /**
+   * Change the default mandatory value in a method chaining fashion.
+   *
+   * @param bool $value  The value to set the 'default_mandatory' property to.
+   *                     If not specified, this will toggle between states.
+   *
+   * @return ParamGroup $this
+   */
+  public function toggleMandatory ($value=null)
+  {
+    if (is_null($value))
+    {
+      $value = !$this->default_mandatory;
+    }
+    $this->default_mandatory = $value;
+    return $this;
+  }
+
+  /**
    * Add a parameter to this group.
    *
    * @param Param $param  The Param we are adding to the group.
-   * @param boolean $mandatory  Is this a mandatory parameter? Default: false.
+   * @param boolean $mandatory  Is this a mandatory parameter? 
+   *                            If not specified, uses the default_mandatory
+   *                            property as the value.
    *
    * To determine if a parameter group is evaluated as matching, all
    * mandatory parameters must be found in the parsed input with non-empty,
@@ -254,11 +280,15 @@ class ParamGroup
    * Only one Param with a specific "optname" may be added to a single group.
    * Attempting to add more than one will result in an Exception being thrown.
    */
-  public function addParam (Param $param, $mandatory=false)
+  public function addParam (Param $param, $mandatory=null)
   {
     if (!($param instanceof Param))
     {
       throw new Exception("addParam must be passed a Param");
+    }
+    if (!is_bool($mandatory))
+    {
+      $mandatory = $this->default_mandatory;
     }
 
     $opt = $param->optname;
@@ -368,7 +398,7 @@ class ParamGroup
     if (isset($this->label))
     {
       $output = str_repeat(' ', $this->parent->indent_labels);
-      $output .= trim($this->label)."\n";
+      $output .= $this->label."\n";
     }
 
     if ($this->show_header_in_usage && isset($this->header))
@@ -392,7 +422,7 @@ class ParamGroup
     if ($this->show_label_in_help && isset($this->label))
     {
       $output = str_repeat(' ', $this->parent->indent_labels);
-      $output .= trim($this->label)."\n";
+      $output .= $this->label."\n";
     }
 
     if (isset($this->header))
@@ -413,10 +443,12 @@ class ParamGroup
    * be assumed to be in the Params class.
    *
    * Methods used to add new Param objects will be handled differently.
-   * The first argument will be used as the $mandatory value and removed
-   * from the argument list. Then the method will be called in the Params
-   * instance with the remaining arguments. Next we get the newly added Param 
-   * object, and add it to this group with the $mandatory value from earlier.
+   * The first argument may be used as the $mandatory value and will be
+   * removed from the argument list if it is boolean.
+   *
+   * Then the method will be called in the Params instance with the remaining 
+   * arguments. Next we get the newly added Param object, 
+   * and add it to this group with the $mandatory value from earlier.
    * Finally, we return this ParamGroup instance instead of the Params.
    *
    * Any methods NOT used to add new Param objects will be called directly
@@ -428,8 +460,14 @@ class ParamGroup
   {
     if (in_array($command, self::PARAM_COMMANDS))
     { // Handle with special logic.
-      $mandatory = array_shift($args);
-      $optname = $args[0];
+      if (is_bool($args[0]))
+      { // Mandatory value found.
+        $mandatory = array_shift($args);
+      }
+      else
+      { // No mandatory value, use default.
+        $mandatory = null;
+      }
       $callable = [$this->parent, $command];
       $this->parent->return_param_on_add = true;
       $param = call_user_func_array($callable, $args);

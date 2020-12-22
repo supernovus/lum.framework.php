@@ -642,9 +642,9 @@ class Params
       foreach ($this->listed_groups as $name => $group)
       {
         if ($group->list_desc === true)
-          $desc = trim($group->label);
+          $desc = $group->label;
         elseif (is_string($group->list_desc))
-          $desc = trim($group->list_desc);
+          $desc = $group->list_desc;
         $output .= str_repeat(' ', $indent);
         $output .= TU::pad(trim($name), $col1width);
         $output .= TU::pad($desc, $col2width);

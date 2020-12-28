@@ -17,7 +17,7 @@ class Params
   const OPT_EXCEPTIONS = 
   [
     'params', 'param_groups', 'command_groups',
-    'visible_groups', 'listed_groups', 'return_param_on_add',
+    'visible_groups', 'listed_groups',
   ];
 
   const OPT_ALIASES =
@@ -86,10 +86,9 @@ class Params
   /**
    * If this is true, then any of the commands that create and add Param
    * objects will return the new Param object instead of the Params instance.
-   * This is not meant for regular use, but is instead used by the auto_chain
-   * feature to get the newly added Param.
    *
-   * As such there are no aliases, and this cannot be set in the constructor.
+   * This is used by the auto_chain feature, and isn't really meant for
+   * regular use as it breaks the method chaining entirely.
    */
   public $return_param_on_add = false;
 
@@ -134,6 +133,42 @@ class Params
     {
       $this->useHelp($help, $usage);
     }
+  }
+
+  /**
+   * Change the auto_chain property value in a method chaining fashion.
+   *
+   * @param bool $value  The value to set the property to.
+   *                     If not specified, this will toggle between states.
+   *
+   * @return Params $this
+   */
+  public function autoChain ($value=null)
+  {
+    if (!is_bool($value))
+    {
+      $value = !$this->auto_chain;
+    }
+    $this->auto_chain = $value;
+    return $this;
+  }
+
+  /**
+   * Change the return_param_on_add property value in a method chaining way.
+   *
+   * @param bool $value  The value to set the property to.
+   *                     If not specified, this will toggle between states.
+   *
+   * @return Params $this
+   */
+  public function returnParam ($value=null)
+  {
+    if (!is_bool($value))
+    {
+      $value = !$this->return_param_on_add;
+    }
+    $this->return_param_on_add = $value;
+    return $this;
   }
 
   /**
@@ -407,8 +442,7 @@ class Params
   /**
    * Create a ParamGroup using _makeGroup() and add it with add_group().
    *
-   * This uses the exact same parameters as _makeGroup() and also
-   * supports any additional options used by add_group().
+   * This uses the same parameters as _makeGroup() and add_group().
    */
   public function group (string $name, $opts=[], $chain=null)
   {
@@ -449,15 +483,13 @@ class Params
    * @param string $opt  The optname for the Param.
    * @param string $desc  A description of the Param.
    * @param string $var  (Optional) The varname for the Param.
+   * @param array $opts  (Optional) Further options for param().
    *
    * @return Params $this
    */
-  public function toggle (string $opt, string $desc, $var=null)
+  public function toggle (string $opt, string $desc, $var=null, array $opts=[])
   {
-    $opts = 
-    [
-      'toggle_desc' => $desc
-    ];
+    $opts['toggle_desc'] = $desc;
     return $this->param($opt, $var, $opts);
   }
 
@@ -478,16 +510,14 @@ class Params
    * @param string $opt  The optname for the Param.
    * @param string $desc  A description of the Param.
    * @param string $var  (Optional) The varname for the Param.
+   * @param array $opts  (Optional) Further options for param().
    *
    * @return Params $this
    */
-  public function flag (string $opt, string $desc, $var=null)
+  public function flag (string $opt, string $desc, $var=null, array $opts=[])
   {
-    $opts = 
-    [
-      'toggle_desc'  => $desc, 
-      'toggle_multi' => true
-    ];
+    $opts['toggle_desc']  = $desc; 
+    $opts['toggle_multi'] = true;
     return $this->param($opt, $var, $opts);
   }
 
@@ -500,18 +530,17 @@ class Params
    * @param string $val  The value_placeholder for the Param
    * @param string $desc  A description of the Param.
    * @param string $var  (Optional) The varname for the Param.
+   * @param array $opts  (Optional) Additional options to pass to param().
    *
    * @return Params $this
    */
-  public function value (string $opt, string $val, string $desc, $var=null)
+  public function value (string $opt, string $val, string $desc, $var=null,
+    array $opts=[])
   {
-    $opts = 
-    [
-      'value_desc'        => $desc, 
-      'has_value'         => true, 
-      'value_required'    => true,
-      'value_placeholder' => $val,
-    ];
+    $opts['value_desc']        = $desc; 
+    $opts['has_value']         = true; 
+    $opts['value_required']    = true;
+    $opts['value_placeholder'] = $val;
     return $this->param($opt, $var, $opts);
   }
 
@@ -521,9 +550,10 @@ class Params
    * This is a parameter that can have a value or not have a value.
    *
    * @param string $opt  The optname for the Param.
-   * @param string $val  The value_placeholder for the Param
+   * @param string $val  The value_placeholder for the Param.
    * @param string $dv  A description of the Param for when it has a value.
    * @param string $dt  A description of the Param when no value is specified.
+   * @param string $var  (Optional) The varname for the Param.
    * @param array $opts  (Optional) Additional options to pass to param().
    *
    * The $opts aren't required, but anything supported by param() can be

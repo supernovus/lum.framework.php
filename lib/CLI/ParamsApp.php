@@ -109,7 +109,7 @@ abstract class ParamsApp
    *
    * Feel free to override in your subclass if so desired.
    */
-  protected function handle_no_command ($opts, $params)
+  protected function handle_default ($opts, $params)
   {
     $this->error($this->no_command_message);
   }

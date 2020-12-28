@@ -469,9 +469,10 @@ class ParamGroup
         $mandatory = null;
       }
       $callable = [$this->parent, $command];
+      $retval = $this->parent->return_param_on_add;
       $this->parent->return_param_on_add = true;
       $param = call_user_func_array($callable, $args);
-      $this->parent->return_param_on_add = false;
+      $this->parent->return_param_on_add = $retval;
       $this->addParam($param, $mandatory);
       return $this;
     }

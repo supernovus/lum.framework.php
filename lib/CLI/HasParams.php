@@ -14,16 +14,19 @@ trait HasParams
    * 'name' property of the ParamGroup object that matched the command spec.
    * If the method doesn't exist, an exception will be thrown.
    *
-   * If command groups were defined but none of the defined commands matched,
-   * it looks for handle_no_command() instead.
+   * If no command groups were defined, or none of the defined commands 
+   * matched, it looks for a handle_default() method instead.
    *
-   * If no command groups were defined, it looks for handle_params() instead.
+   * Alternatively, if no command groups were defined, a method called
+   * handle_params() may be used instead of handle_default().
+   * Likewise if commands were defined, but no command matched, a method
+   * called handle_no_command() may be used instead of handle_default().
    *
    * The parsed parameters array will be passed to the matching method as the 
    * first argument, the Params instance will be passed as the second argument.
    * No other arguments are passed.
    * 
-   * If no matching methods were found, this will throw an Exception.
+   * If no valid methods at all were found, this will throw an Exception.
    *
    * @param Params $params  The Params instance we are using.
    *
@@ -52,16 +55,21 @@ trait HasParams
           throw new Exception("Missing $meth method for specified command");
         }
       }
-      elseif (method_exists($this, "handle_no_command"))
-      { // No Command matched the command line
+      elseif (method_exists($this, 'handle_no_command'))
+      { // No Command matched the command line, look for handle_no_command().
         return $this->handle_no_command($parsedOpts, $params);
       }
     }
-    elseif (method_exists($this, "handle_params"))
-    { // A handle_params() method is used if there are no commands.
+    elseif (method_exists($this, 'handle_params'))
+    { // No commands defined, look for handle_params().
       return $this->handle_params($parsedOpts, $params);
     }
-    
+
+    if (method_exists($this, 'handle_default'))
+    { // No Command matched the command line, use the default.
+      return $this->handle_default($parsedOpts, $params);
+    }
+
     // If we reached here, no methods could be found to handle the dispatch.
     throw new Exception("Could not find anything to dispatch Params to");
   }

@@ -25,12 +25,12 @@ class MyScript extends TestApp
 
   protected function handle_add ($opts, $params)
   {
-    return wrap('add', $opts);
+    return $this->debug_opts($opts, $params, "handle_add()\n");
   }
 
   protected function handle_delete ($opts, $params)
   {
-    return wrap('delete', $opts);
+    return $this->debug_opts($opts, $params, "handle_delete()\n");
   }
 
 }

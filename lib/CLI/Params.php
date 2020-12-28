@@ -227,6 +227,16 @@ class Params
   }
 
   /**
+   * Get all ParamGroup objects.
+   *
+   * @return array  All ParamGroup objects regardless of type.
+   */
+  public function getGroups ()
+  {
+    return $this->param_groups;
+  }
+
+  /**
    * A wrapper around getParams() that sets the query to be for the
    * optname property.
    *

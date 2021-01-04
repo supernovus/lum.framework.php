@@ -69,6 +69,7 @@ trait Auth
 
     $skipUsers = isset($aopts['skipUsers']) ? $aopts['skipUsers'] : false;
     $interactive = isset($aopts['interactive']) ? $aopts['interactive'] : true;
+    $logNone = isset($aopts['log']) ? $aopts['log'] : true;
 
     if (isset($conf['userAccess']) && $conf['userAccess'] && !$skipUsers)
     {
@@ -120,7 +121,11 @@ trait Auth
       }
     }
 
-    error_log("No auth methods succeeded.");
+    if ($logNone)
+    {
+      error_log("No auth methods succeeded.");
+    }
+
     return false;
   }
 

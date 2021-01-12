@@ -282,7 +282,7 @@ trait UserTokens
     return $this->json_err($ecode);
   }
 
-  protected function login_token ($login, $pass, $opts)
+  protected function token_login ($login, $pass, $opts)
   {
     $umodel = $this->get_prop('users_model', 'users');
     $logm   = $this->get_prop('userlog_model');

@@ -18,10 +18,16 @@ const PLUGINS_DEFAULT_LOADER = "models";
  */
 trait HasPlugins
 {
-  protected $loaded_plugins = [];
+  protected $loaded_plugins  = [];  // Plugins we've successfully loaded.
+  protected $missing_plugins = [];  // Plugins that don't exist, we can skip.
 
   public function plugin ($plugname, $plugopts=[], $loadopts=[])
   {
+    if (in_array($plugname, $this->missing_plugins))
+    { // We've already noted this plugin doesn't exist. Bye!
+      return null;
+    }
+
     $core = \Lum\Core::getInstance();
 
     if ($loadopts === true)
@@ -57,7 +63,7 @@ trait HasPlugins
     )
     { 
       // If we have a populate_plugin_opts() method, call it.
-      if (is_callable([$this, 'populate_plugin_opts']))
+      if (method_exists($this, 'populate_plugin_opts'))
       {
         $plugopts = $this->populate_plugin_opts($plugname, $plugopts);
       }
@@ -131,7 +137,8 @@ trait HasPlugins
           throw $e;
         }
         else
-        { // Return empty plugin.
+        { // Mark it as missing, and return null.
+          $this->missing_plugins[] = $plugname;
           return null;
         }
       }

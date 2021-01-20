@@ -546,9 +546,9 @@ abstract class Basic
 
     $fancy = isset($opts['fancy']) 
            ? (bool)$opts['fancy'] 
-           : isset($opts['reformat'])
+           : (isset($opts['reformat'])
            ? (bool)$opts['reformat']
-           : false;
+           : false);
 
     if (is_string($data))
     { // Passthrough.

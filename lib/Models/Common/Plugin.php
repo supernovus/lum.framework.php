@@ -29,7 +29,7 @@ abstract class Plugin
 
     if (isset($opts['__classid']))
     {
-      $this->__classid = $opts['__classdid'];
+      $this->__classid = $opts['__classid'];
     }
     else
     {

@@ -44,6 +44,11 @@ trait Auth
 
     $this->auth_config = $auth_config;
 
+    if (isset($opts['user']) && is_object($opts['user']))
+    {
+      $this->user = $opts['user'];
+    }
+
     if ($save_uri)
     {
       $core->sess; // Make sure it's initialized.

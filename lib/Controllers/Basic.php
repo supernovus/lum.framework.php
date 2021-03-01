@@ -676,6 +676,19 @@ abstract class Basic
     return $this->models[$modelname];
   }
 
+  /**
+   * Load another controller.
+   */
+  public function loadController (string $name, array $opts=[])
+  {
+    $core = \Lum\Core::getInstance();
+    if (property_exists($this, 'user') && is_object($this->user))
+    { // We're using the Auth trait, let's chain the user through.
+      $opts['user'] = $this->user;
+    }
+    return $core->controllers->load($name, $opts);
+  }
+
   /** 
    * Return our controller base name.
    *

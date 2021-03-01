@@ -74,7 +74,8 @@ trait HasPlugins
       if (property_exists($this, 'plugin_loader'))
       { // We're using a custom loader.
         $loader = $this->plugin_loader;
-        if (!isset($core->$loader) || !($core->$loader instanceof \Lum\Loader\Instance))
+        if (!isset($core->$loader) 
+          || !($core->$loader instanceof \Lum\Loader\Instance))
         {
           if ($fatal)
           {

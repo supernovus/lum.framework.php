@@ -17,7 +17,13 @@ trait UserTokens
   /** 
    * Depending on the content of the POST it can be either a regenerate
    * request from an already authenticated user, or a request to retreive
-   * a token by passing login values. Determine which and do it.
+   * a token by passing login values. Determine which and do it. The request
+   * content also determines if we are using F1 or F2 tokens (see below.)
+   *
+   * F1 Tokens (format code "01")
+   *
+   * F1 tokens are device-independent, and work on any device. If they are
+   * cancelled or regenerated, it affects all devices using that token.
    *
    * For login requests:
    *
@@ -25,7 +31,33 @@ trait UserTokens
    *
    * For regenerate token requests:
    *
-   * POST /:appname/auth/token {"expire":"1M"}
+   * POST /:appname/auth/token {"expire": "1M"}
+   *
+   * F2 Tokens (format code "02")
+   *
+   * F2 tokens are device-specific, and a unique device id is used as a 
+   * part of the hashes. If one of these tokens is cancelled or regenerated, 
+   * it only affects the specific device. 
+   *
+   * For login requests:
+   *
+   * POST /:appname/auth/token 
+   * {
+   *   "format": 2
+   *   "user": "email", 
+   *   "pass": "password", 
+   *   "device": "deviceId",
+   *   "name": "name for display purposes"
+   * }
+   *
+   * For regenerate token requests:
+   *
+   * POST /:appname/auth/token
+   * {
+   *   "format": 2, 
+   *   "device": "deviceId", 
+   *   "expire": "1M"
+   * }
    *
    */
   public function handle_post_token ($opts)
@@ -56,7 +88,7 @@ trait UserTokens
   }
 
   /**
-   * Get a token for the currently logged in user.
+   * Get a F1 token for the currently logged in user.
    *
    * GET /:appname/auth/token
    */

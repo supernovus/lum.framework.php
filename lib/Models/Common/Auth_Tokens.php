@@ -13,46 +13,47 @@ trait Auth_Tokens
   public $key_field    = 'authkey';
   public $user_field   = 'user';
   public $expire_field = 'expire';
+  public $device_field = 'device';
+  public $name_field   = 'name';
 
-  public $hashType   = 'sha256';
+  public $hashType = TokenInfo::DEFAULT_HASH_TYPE;
 
-  public $errors        = [];
+  public $errors = [];
 
   public $default_expire = 0;
 
   /**
-   * Get the current format code.
-   *
-   * Currently hard coded as we only support one format, this is mostly
-   * reserved for future extensions.
-   */
-  public function formatCode ($opts=null)
-  {
-    return '01';
-  }
-
-  /**
    * Get an Auth Token for the given App Token.
+   *
+   * We don't actually use this method, but it's here as an example of how
+   * the algorithm works.
    */
-  public function authToken ($appToken)
+  public function authToken ($appToken, $deviceId=null)
   {
     $bits = $this->parseToken($appToken);
     if (!isset($bits)) return; // invalid token.
-    $format = $this->formatCode();
     $sid = $bits[0];
     $ahash = $bits[1];
-    $uhash = $this->authHash($sid, $ahash);
-    $len = sprintf('%02d', strlen($sid));
-    $token = $format . $len . $sid . $uhash;
+    $format = $bits[2];
+    if ($format === TokenInfo::FORMAT_1)
+    {
+      $uhash = $this->authHash($sid, $ahash);
+      $len = sprintf('%02d', strlen($sid));
+      $token = $format . $len . $sid . $uhash;
+    }
+    elseif ($format === TokenInfo::FORMAT_2)
+    { // TODO: implement F2 authtoken generation.
+      throw new \Exception("NYI");
+    }
     return $token;
   }
 
   /**
    * Get the hash portion of an Auth Token.
    */
-  protected function authHash ($sid, $ahash)
+  protected function authHash ($tid, $ahash, $sid=null)
   {
-    return hash($this->hashType, trim($sid.$ahash));
+    return TokenInfo::authHash($tid, $ahash, $sid, $this->hashType);
   }
 
   /**
@@ -60,25 +61,20 @@ trait Auth_Tokens
    *
    * @return array  An array with sid, hash, and format in that order.
    */
-  public function parseToken ($token)
+  public function parseToken ($token, $assoc=false)
   {
-    $format = substr($token, 0, 2);
-    $validf = $this->formatCode();
-    if ($format != $validf)
-    {
-      $this->errors[] = 'invalid_format';
+    $tinfo = TokenInfo::parseToken($token, $assoc);
+    if (is_string($tinfo))
+    { // It returned a specific error.
+      $this->errors[] = $tinfo;
       return;
     }
-    $len = intval(substr($token, 2, 2));
-    if (!$len)
-    {
-      $this->errors[] = 'invalid_length';
+    elseif (!is_array($tinfo))
+    { // This should never happen.
+      $this->errors[] = 'unknown_parse_error';
       return;
     }
-    $sid = substr($token, 4, $len);
-    $offset = $len + 4;
-    $hash = substr($token, $offset);
-    return [$sid, $hash, $format];
+    return $tinfo;
   }
 
   /**
@@ -104,6 +100,7 @@ trait Auth_Tokens
     }
     $user = $row->getUser();
     if (!isset($user)) return; // invalid user.
+
     $ahash = $row->appHash($user);
     $chash = $this->authHash($sid, $ahash);
     if ($chash == $uhash)

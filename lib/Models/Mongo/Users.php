@@ -35,27 +35,44 @@ abstract class Users extends \Lum\DB\Mongo\Model
    */
   public function getUser($identifier, $column=null)
   {
-    // First, check to see if it's cached.
-    if (isset($this->user_cache[$identifier]))
+    if (is_array($identifier))
     {
-      return $this->user_cache[$identifier];
+      $ident = json_encode($identifier);
+    }
+    else
+    {
+      $ident = (string)$identifier;
+    }
+
+    error_log("getUser($ident, ".json_encode($column).")");
+
+    if (isset($column))
+    {
+      $ident = $column.'_'.$ident;
+    }
+
+    if (isset($this->user_cache[$ident]))
+    { // It's already been cached.
+      return $this->user_cache[$ident];
     }
 
     // Look up the user in the database.
     if (isset($column))
     {
-      return $this->user_cache[$identifier]
+      return $this->user_cache[$ident]
            = $this->findOne([$column=>$identifier]);
     }
-    elseif ($identifier instanceof ObjectId || ctype_xdigit($identifier))
+    elseif ($identifier instanceof ObjectId // BSON ObjectId object.
+      || is_array($identifier)              // Extended JSON representation.
+      || ctype_xdigit($identifier))         // An ObjectId string.
     { // Look up by userId.
-      return $this->user_cache[$identifier] 
+      return $this->user_cache[$ident] 
            = $this->getDocById($identifier);
     }
     else
     { // Look up by e-mail address.
       $field = $this->login_field;
-      return $this->user_cache[$identifier] 
+      return $this->user_cache[$ident] 
            = $this->findOne([$field=>$identifier]);
     }
   }

@@ -30,6 +30,9 @@ trait Messages
   protected $text;              // Our translation table.
   protected $lang;              // Our language.
 
+  protected $OVERWRITE_JSON = 1; // Overwrite conflicting JSON data.
+  protected $MERGE_JSON     = 2; // Merge conflicting JSON data.
+
   protected function __init_messages_controller ($opts)
   {
 #    error_log("__init_messages_controller()");
@@ -259,17 +262,15 @@ trait Messages
    *
    * @param string[] $messages  The message codes to add.
    */
-  public function add_status_json ($messages)
+  public function add_status_json (array $messages, string $prefix='',
+    array $opts=[], $fieldName='status_messages')
   {
-    $msgArray = $this->text->strArray($messages);
-    if (isset($this->data['json'], $this->data['json']['status_messages']))
-    {
-      $this->data['json']['status_messages'] += $msgArray;
-    }
-    else
-    {
-      $this->add_json('status_messages', $msgArray);
-    }
+    $jsonMode = isset($opts['ADD_JSON']) 
+      ? intval($opts['ADD_JSON'])
+      : $this->MERGE_JSON;
+
+    $msgArray = $this->text->strArray($messages, $prefix, $opts);
+    $this->add_json($fieldName, $msgArray, $jsonMode);
   }
 
   /**
@@ -284,9 +285,28 @@ trait Messages
    * ?>
    *
    */
-  public function add_json ($name, $data)
+  public function add_json ($name, $data, $mode=0)
   {
-    $this->data['json'][$name] = $data;
+    if (isset($this->data['json'], $this->data['json'][$name]))
+    { // Existing data found, the mode determines how we handle this.
+      if ($mode === $this->OVERWRITE_JSON)
+      { // We're not even going to blink, just overwrite it.
+        $this->data['json'][$name] = $data;
+      }
+      elseif ($mode === $this->MERGE_JSON)
+      { // Merge using the + operator.
+        $this->data['json'][$name] += $data;
+      }
+      else
+      { // No mode selected, reject this.
+        error_log("attempt to overwrite '$name' JSON rejected");
+        return;
+      }
+    }
+    else
+    { // New data, just add it.
+      $this->data['json'][$name] = $data;
+    }
   }
 
   /**

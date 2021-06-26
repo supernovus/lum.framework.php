@@ -44,7 +44,7 @@ abstract class Users extends \Lum\DB\Mongo\Model
       $ident = (string)$identifier;
     }
 
-    error_log("getUser($ident, ".json_encode($column).")");
+    #error_log("getUser($ident, ".json_encode($column).")");
 
     if (isset($column))
     {

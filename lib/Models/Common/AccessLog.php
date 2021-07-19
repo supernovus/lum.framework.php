@@ -104,7 +104,7 @@ trait AccessLog
     $log->save();
   }
 
-  protected function log_headers ($log)
+  public function log_headers ($log)
   {
     // Add server headers.
     $headers = $_SERVER;
@@ -118,7 +118,7 @@ trait AccessLog
     $log->headers = $headers;
   }
 
-  protected function log_context ($log, $context)
+  public function log_context ($log, $context)
   {
     $cdata = [];
     
@@ -169,17 +169,14 @@ trait AccessLog
     $log->context = $cdata;
   }
 
-  protected function log_user ($log, $user)
+  public function log_user ($log, $user)
   {
     $userdata = [];
-    if (isset($user->id))
-      $userdata['id'] = $user->id;
-    elseif (isset($user->_id))
-      $userdata['id'] = $user->_id;
-    if (isset($user->email))
-      $userdata['email'] = $user->email;
-    if (isset($user->name))
-      $userdata['name'] = $user->name;
+
+    $userdata['id'] = $user->get_id();
+    $userdata['email'] = $user->email;
+    $userdata['name'] = $user->getName();
+
     $log->userdata = $userdata;
   } 
 }

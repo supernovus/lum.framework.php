@@ -23,7 +23,6 @@ trait Resources
    */
   public $use_link_header = false;
 
-
   /**
    * If using $use_link_header, this can be defined as a prefix to add
    * to all of the links added. Useful if you have multiple apps on a URL
@@ -70,6 +69,7 @@ trait Resources
           'jquery', 
           'core',
           'helpers',
+          'observable',
           'hash',
           'json.jq', 
           'disabled.jq',
@@ -78,7 +78,7 @@ trait Resources
         '#webcore' =>
         [ // A simplified web app model core. No rendering engine specified.
           '#common',
-          'observable',
+          'oquery',
           'modelapi',
           'viewcontroller',
         ],
@@ -87,7 +87,6 @@ trait Resources
           '#webcore',
           'webservice',
           'promise',
-          'oquery',
           'modelapi/ws_model',
         ],
         '#base64' =>

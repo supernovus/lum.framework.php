@@ -286,13 +286,13 @@ trait Users
       $subject = isset($opts['subject']) ? $opts['subject'] :
         'subject.forgot';
 
-      if (!isset($opts['translate_subject']) || !$opts['translate_subject'])
+      if (!isset($opts['translate_subject']) || $opts['translate_subject'])
       {
         $text = $this->parent->get_text();
         $subject = $text[$subject];
       }
 
-      return $this->mail_reset_pw($template, $subject, $opts);
+      return $this->mail_reset_pw($user, $template, $subject, $opts);
     }
   }
 

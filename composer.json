@@ -13,16 +13,16 @@
   "require":
   {
     "php": "^7.4 || ^8.0",
-    "lum/lum-core": "^1.5 || dev-master",
-    "lum/lum-html": "^1.0 || dev-master",
-    "lum/lum-mailer": "^1.0 || dev-master",
-    "lum/lum-uimsg": "^1.0 || dev-master",
-    "lum/lum-db": "^1.8 || dev-master",
-    "lum/lum-text": "^1.2 || dev-master"
+    "lum/lum-core": "^1.7",
+    "lum/lum-html": "^1.0",
+    "lum/lum-mailer": "^1.0",
+    "lum/lum-uimsg": "^1.0",
+    "lum/lum-db": "^1.8",
+    "lum/lum-text": "^1.3"
   },
   "require-dev":
   {
-    "lum/lum-test": "^2.2.2 || dev-master",
+    "lum/lum-test": "^2.2.2",
     "ext-PDO": "*"
   },
   "autoload":
@@ -35,5 +35,12 @@
   "scripts":
   {
     "test": "lumtest"
+  },
+  "extra":
+  {
+    "branch-alias":
+    {
+      "dev-main": "1.x-dev"
+    }
   }
 }

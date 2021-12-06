@@ -1,7 +1,6 @@
 <?php
 
 namespace Lum\Controllers;
-use Lum\Exception;
 
 /** 
  * This class represents a controller foundation.
@@ -62,13 +61,17 @@ abstract class Basic
 
   /**
    * Should we enable the IE JSON output hack?
+   * It means every time send_json() is used we will use user agent
+   * sniffing (not really super accurate) to detect if IE is being used.
+   * If it is, then we use 'text/plain' instead of 'application/json'.
    */
-  protected $json_ie_support = true;
+  protected $json_ie_support = false;
 
   /**
-   * Should we enable the IE cache output hack?
+   * Should we send an 'Expires' header in addition to the
+   * Cache-Control header when sending JSON or XML content?
    */
-  protected $cache_ie_support = true;
+  protected $cache_expires = false;
 
   /**
    * Should we use text/xml instead of application/xml?
@@ -263,17 +266,18 @@ abstract class Basic
    *                       probably don't want to use this option directly.
    *                       See the wants() method instead.
    *
-   * @return void
+   * @return mixed  Depends on the parameters.
    */
   protected function needs ($constructor, $opts=[], $fullname=False, $nofail=false)
   {
     if (is_array($constructor))
     {
+      $results = [];
       foreach ($constructor as $const)
       {
-        $this->needs($const, $opts, $fullname, $nofail);
+        $results[$const] = $this->needs($const, $opts, $fullname, $nofail);
       }
-      return;
+      return $results;
     }
 
     if ($fullname)
@@ -302,9 +306,16 @@ abstract class Basic
       $this->called_constructors[$method] = true;
       $this->$method($opts);
     }
-    elseif (!$nofail)
+    else
     {
-      throw new Exception("Invalid constructor '$constructor' requested.");
+      if ($nofail)
+      { 
+        return false;
+      }
+      else
+      {
+        throw new Exception("Invalid constructor '$constructor' requested.");
+      }
     }
   }
 
@@ -315,7 +326,7 @@ abstract class Basic
    * @param (array|string) $constructor  See needs().
    * @param mixed $opts  See needs().
    * @param bool $fullname  See needs().
-   * @return void
+   * @return mixed
    */
   protected function wants ($constructor, $opts=[], $fullname=False)
   {
@@ -473,7 +484,7 @@ abstract class Basic
   { 
     $core = \Lum\Core::getInstance();
     $core->output->json($this->json_ie_support);
-    $core->output->nocache($this->cache_ie_support);
+    $core->output->nocache($this->cache_expires);
 
     $json_opts = 0;
     if 
@@ -542,7 +553,7 @@ abstract class Basic
   {
     $core = \Lum\Core::getInstance();
     $core->output->xml($this->use_xml_text);
-    $core->output->nocache($this->cache_ie_support);
+    $core->output->nocache($this->cache_expires);
 
     $fancy = isset($opts['fancy']) 
            ? (bool)$opts['fancy'] 

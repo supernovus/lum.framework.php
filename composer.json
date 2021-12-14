@@ -12,16 +12,16 @@
   ],
   "require":
   {
-    "lum/lum-compat": "^1.0",
-    "lum/lum-core": "^1.8",
-    "lum/lum-html": "^1.0",
-    "lum/lum-uimsg": "^1.0",
-    "lum/lum-db": "^1.8",
-    "lum/lum-text": "^1.3"
+    "lum/lum-compat": "^2.0",
+    "lum/lum-core": "^2.0",
+    "lum/lum-html": "^2.0",
+    "lum/lum-uimsg": "^2.0",
+    "lum/lum-db": "^2.0",
+    "lum/lum-text": "^2.0"
   },
   "require-dev":
   {
-    "lum/lum-test": "^2.2.2",
+    "lum/lum-test": "^3.0",
     "ext-PDO": "*"
   },
   "suggest":
@@ -43,7 +43,7 @@
   {
     "branch-alias":
     {
-      "dev-main": "1.x-dev"
+      "dev-main": "2.x-dev"
     }
   }
 }

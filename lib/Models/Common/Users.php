@@ -60,7 +60,7 @@ trait Users
   }
 
   // Override the default offsetGet function.
-  public function offsetGet ($offset)
+  public function offsetGet ($offset): mixed
   {
     return $this->getUser($offset);
   }

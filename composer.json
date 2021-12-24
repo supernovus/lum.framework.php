@@ -12,8 +12,8 @@
   ],
   "require":
   {
-    "lum/lum-compat": "^2.0",
-    "lum/lum-core": "^2.0",
+    "lum/lum-compat": "^2.2",
+    "lum/lum-core": "^2.2",
     "lum/lum-html": "^2.0",
     "lum/lum-uimsg": "^2.0",
     "lum/lum-db": "^2.0",

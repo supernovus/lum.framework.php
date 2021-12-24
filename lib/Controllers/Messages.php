@@ -106,8 +106,11 @@ trait Messages
       $this->data['title'] = $pagetitle;
     }
 
-    // And a wrapper to our has_errors() method.
-    $this->addWrapper('has_errors');
+    if (is_callable([$this, 'addWrapper']))
+    {
+      // And a wrapper to our has_errors() method.
+      $this->addWrapper('has_errors');
+    }
 
   }
 

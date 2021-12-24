@@ -5,6 +5,8 @@ namespace Lum\Controllers;
 /**
  * Enhanced controller, extension of Basic controller.
  *
+ * @deprecated See `Core` and `Core\*` base classes
+ *
  * @uses JsonResponse
  * @uses XMLResponse
  */

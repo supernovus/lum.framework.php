@@ -5,6 +5,8 @@ namespace Lum\Controllers;
 /**
  * Advanced controller, extension of Basic controller.
  *
+ * @deprecated See `Core` and `Core\*` base classes
+ *
  * @uses ViewData
  * @uses Themes
  * @uses ModelConf

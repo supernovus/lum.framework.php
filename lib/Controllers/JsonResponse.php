@@ -13,7 +13,7 @@ function set_json_property (&$data, $pname, $pval)
 
 function get_json_property ($data, $pname)
 {
-  return _JSON_API::get($data, $pname)
+  return _JSON_API::get($data, $pname);
 }
 
 function has_json_property ($data, $pname)

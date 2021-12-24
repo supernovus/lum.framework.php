@@ -180,7 +180,7 @@ abstract class Core
       'deps_prop' => 'init_traits',
     ];
     
-    $this->_dep_group('init_route', $dep_group_opts, [$opts]);
+    $this->_dep_group('init_route', $dep_group_opts, [$context]);
 
    }
 

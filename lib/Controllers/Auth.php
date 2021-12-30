@@ -19,6 +19,9 @@ trait Auth
 
   protected function __init_auth_controller ($opts)
   {
+    // We want to make sure messages is loaded first.
+    $this->needs('messages');
+
     // If Auth\Users trait is available, load it first.
     $this->wants('authusers');
 
@@ -141,25 +144,33 @@ trait Auth
    */
   protected function need_user ()
   {
+    #error_log("need_user()");
     $login_page  = $this->get_prop('login_page',  'login');
     $user = $this->get_user(true);
+    #error_log("== user: ".json_encode($user));
     if (!$user) 
     { 
+      #error_log("-- no user, redirecting to ".json_encode($login_page));
       $this->go($login_page); 
+      return false;
     }
+    #error_log("-- user check passed");
     $validate = $this->get_prop('validate_user',   true);
     if ($validate && is_callable([$this, 'validate_user']))
     {
+      #error_log("-- sending to validate_user()");
       $valid = $this->validate_user($user);
-      if (isset($valid))
-      { // Only process further if it returned a defined result.
-        if (!$valid)
-        {
-          $this->go_error('invalid_user', $login_page);
-        }
+      #error_log("== valid: ".json_encode($valid));
+      if (isset($valid) && !$valid)
+      { // A defined but falsey value was returned.
+        #error_log("-- was not valid, redirecting to ".json_encode($login));
+        $this->go_error('invalid_user', $login_page);
+        return false;
       }
     }
+    #error_log("-- all is good, setting user");
     $this->set_user($user, true);
+    return true;
   }
 
   /**

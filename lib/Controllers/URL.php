@@ -11,9 +11,9 @@ trait URL
    * @param Opts   $opts   Options to pass to Lum\Plugins\Url::redirect().
    *
    */
-  public function redirect ($url, $opts=array())
+  public function redirect ($url, $opts=array()): never
   {
-    return \Lum\Plugins\Url::redirect($url, $opts);
+    \Lum\Plugins\Url::redirect($url, $opts);
   }
 
   /**
@@ -21,7 +21,7 @@ trait URL
    *
    * See Lum\Plugins\Url::site_url() for details.
    */
-  public function url ($ssl=Null, $port=Null)
+  public function url ($ssl=Null, $port=Null): string
   {
     return \Lum\Plugins\Url::site_url($ssl, $port);
   }
@@ -31,7 +31,7 @@ trait URL
    *
    * See Lum\Plugins\Url::request_uri() for details.
    */
-  public function request_uri ()
+  public function request_uri (): string
   {
     return \Lum\Plugins\Url::request_uri();
   }
@@ -41,7 +41,7 @@ trait URL
    *
    * See Lum\Plugins\Url::current_url() for details.
    */
-  public function current_url ()
+  public function current_url (): string
   {
     return \Lum\Plugins\Url::current_url();
   }
@@ -52,21 +52,17 @@ trait URL
    *
    * See Lum\Plugins\Url::download() for details.
    */
-  public function download ($file, $opts=[])
+  public function download ($file, $opts=[]): never
   {
-    return \Lum\Plugins\Url::download($file, $opts);
+    \Lum\Plugins\Url::download($file, $opts);
   }
 
   /**
    * Is the server using a POST request?
    */
-  public function is_post ()
+  public function is_post (): bool
   {
-    if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST))
-    {
-      return True;
-    }
-    return False;
+    return ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST));
   }
 
 }

@@ -7,7 +7,7 @@ trait Routes
   /**
    * Does a route exist?
    */
-  public function has_route ($route)
+  public function has_route ($route): bool
   {
     $core = \Lum\Core::getInstance();
     return $core->router->has($route);
@@ -28,7 +28,7 @@ trait Routes
    *
    * @throws Exception  If the route does not exist.
    */
-  public function go ($page, $params=[], $opts=[])
+  public function go ($page, $params=[], $opts=[]): never
   {
     $core = \Lum\Core::getInstance();
 
@@ -58,7 +58,7 @@ trait Routes
    *
    * @throws Exception  If the route does not exist.
    */
-  public function get_uri ($page, $params=[])
+  public function get_uri ($page, $params=[]): string
   {
 #    error_log("get_uri('$page',".json_encode($params).")");
     $core = \Lum\Core::getInstance();
@@ -87,7 +87,7 @@ trait Routes
    *
    * @throws Exception  If the route does not exist.
    */
-  public function get_suburi ($subpage, $params=[])
+  public function get_suburi ($subpage, $params=[]): string
   {
     $ourid = $this->__classid;
     if (is_null($subpage))

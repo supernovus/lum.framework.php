@@ -4,11 +4,12 @@ namespace Lum\Controllers\Auth;
 
 class IPAccess extends Plugin
 {
-  public function options ($conf)
+  public function options (mixed $conf): array
   {
     return ['params','header'];
   }
-  public function getAuth ($conf, $opts=[])
+
+  public function getAuth (mixed $conf, array $opts=[]): ?bool
   {
     $context = isset($opts['context']) ? $opts['context'] : null;
     $params  = isset($opts['params'])  ? $opts['params']  : null;
@@ -72,13 +73,13 @@ class IPAccess extends Plugin
         else
         { // No header, skip it.
 #          error_log("No $header header found in: ".json_encode($headers));
-          return;
+          return null;
         }
       }
       else
       {
         error_log("Remote IP '$ip' was not in access list.");
-        return;
+        return null;
       }
     }
   }

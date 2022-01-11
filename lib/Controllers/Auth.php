@@ -65,7 +65,7 @@ trait Auth
     }
   }
 
-  protected function get_auth ($context, $aopts=[])
+  protected function get_auth ($context, $aopts=[]): bool
   {
     if (!isset($this->auth_config)) return false; 
 
@@ -142,7 +142,7 @@ trait Auth
    * but not from a per-controller basis (make sure to disable the
    * 'need_user' property.)
    */
-  protected function need_user ()
+  protected function need_user (): void
   {
     #error_log("need_user()");
     $login_page  = $this->get_prop('login_page',  'login');
@@ -152,7 +152,6 @@ trait Auth
     { 
       #error_log("-- no user, redirecting to ".json_encode($login_page));
       $this->go($login_page); 
-      return false;
     }
     #error_log("-- user check passed");
     $validate = $this->get_prop('validate_user',   true);
@@ -165,18 +164,16 @@ trait Auth
       { // A defined but falsey value was returned.
         #error_log("-- was not valid, redirecting to ".json_encode($login));
         $this->go_error('invalid_user', $login_page);
-        return false;
       }
     }
     #error_log("-- all is good, setting user");
     $this->set_user($user, true);
-    return true;
   }
 
   /**
    * Get the currently authenticated user.
    */
-  public function get_user ($checkauth=false)
+  public function get_user (bool $checkauth=false): ?object
   {
     if (isset($this->user))
     {
@@ -193,12 +190,13 @@ trait Auth
         return $users->getUser($userid);
       }
     }
+    return null;
   }
 
   /**
    * Set the user.
    */
-  public function set_user ($user, $interactive=false)
+  public function set_user (object $user, bool $interactive=false): void
   {
     $this->user = $user;
     $this->data['user'] = $user;

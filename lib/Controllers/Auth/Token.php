@@ -4,12 +4,12 @@ namespace Lum\Controllers\Auth;
 
 class Token extends Plugin
 {
-  public function options ($conf)
+  public function options (mixed $conf): array
   {
     return ['header','model'];
   }
 
-  public function getAuth ($conf, $opts=[])
+  public function getAuth (mixed $conf, array $opts=[]): ?bool
   {
     $context = isset($opts['context']) ? $opts['context'] : null;
     $header  = isset($opts['header'])  ? $opts['header']  : 'X-Lum-Auth-Token';
@@ -18,7 +18,7 @@ class Token extends Plugin
     if (!isset($model))
     {
       error_log("No model set, cannot continue.");
-      return false;
+      return null;
     }
 
     if (is_string($model))
@@ -48,5 +48,7 @@ class Token extends Plugin
         return false;
       }
     }
+    // Nothing? Okay then.
+    return null;
   }
 }

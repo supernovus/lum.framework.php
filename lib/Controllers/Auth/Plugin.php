@@ -10,7 +10,7 @@ abstract class Plugin
     if (isset($opts['parent']))
       $this->parent = $opts['parent'];
   }
-  abstract public function options ($conf);
-  abstract public function getauth ($conf, $opts=[]);
+  abstract public function options (mixed $conf): array;
+  abstract public function getAuth (mixed $conf, array $opts=[]): ?bool;
 }
 

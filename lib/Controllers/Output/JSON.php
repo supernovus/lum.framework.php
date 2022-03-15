@@ -101,7 +101,7 @@ trait JSON
     }
     else
     {
-      throw new Exception('Unsupported data type sent to send_json()');
+      throw new \Exception('Unsupported data type sent to send_json()');
     }
     return $json;
   }

@@ -2,6 +2,8 @@
 
 namespace Lum\Controllers\Output;
 
+use Exception;
+
 trait XML
 {
   /**

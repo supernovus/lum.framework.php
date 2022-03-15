@@ -2,6 +2,8 @@
 
 namespace Lum\Controllers;
 
+use Exception;
+
 trait Routes
 {
   /**

@@ -2,6 +2,8 @@
 
 namespace Lum\Models\Common;
 
+use Lum\Encode\Safe64;
+
 trait Users
 {
   abstract public function getUser ($identifier, $fieldname=null);
@@ -200,7 +202,7 @@ trait Users
 
     // Set up a validation code to send to the user.
     $validInfo = array('uid'=>$uid, 'code'=>$code);
-    $validCode = $core->url->encodeArray($validInfo);
+    $validCode = Safe64::encodeData($validInfo);
 
     // E-mail rules for the Lum mailer.
     $mail_rules = isset($opts['mail_rules']) ? $opts['mail_rules'] : [];

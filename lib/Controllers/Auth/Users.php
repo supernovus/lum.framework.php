@@ -2,6 +2,8 @@
 
 namespace Lum\Controllers\Auth;
 
+use Lum\Encode\Safe64;
+
 /* 
  * Authenticate Users Controller Trait. 
  *
@@ -244,7 +246,7 @@ trait Users
   protected function check_reset_code ($validCode, $opts)
   {
     $core = \Lum\Core::getInstance();
-    $validInfo = $core->url->decodeArray($validCode);
+    $validInfo = Safe64::decodeData($validCode);
     if (!is_array($validInfo))
     {
       return $this->invalid("Invalid forgot password code: $validCode");

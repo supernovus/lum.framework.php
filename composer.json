@@ -13,7 +13,7 @@
   "require":
   {
     "lum/lum-compat": "^2.6",
-    "lum/lum-core": "^2.7",
+    "lum/lum-core": "^3.0",
     "lum/lum-html": "^2.0",
     "lum/lum-uimsg": "^2.0",
     "lum/lum-db": "^2.0",
@@ -43,7 +43,7 @@
   {
     "branch-alias":
     {
-      "dev-main": "2.x-dev"
+      "dev-main": "3.x-dev"
     }
   }
 }

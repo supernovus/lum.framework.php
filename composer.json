@@ -14,6 +14,7 @@
   {
     "lum/lum-compat": "^2.6",
     "lum/lum-core": "^3.0",
+    "lum/lum-core-plugins": "^1.0",
     "lum/lum-html": "^2.0",
     "lum/lum-uimsg": "^2.0",
     "lum/lum-db": "^2.0",

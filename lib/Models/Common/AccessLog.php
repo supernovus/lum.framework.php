@@ -85,7 +85,7 @@ trait AccessLog
     $this->log_headers($log);
 
     // Add context information if it is included.
-    if (isset($context) && $context instanceof \Lum\Plugins\RouteContext)
+    if (isset($context) && $context instanceof \Lum\Router\Context)
     {
       $this->log_context($log, $context);
     }

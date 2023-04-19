@@ -15,7 +15,7 @@ trait XML_API
         _XML_API::set($data, 'version', $this->api_version);
       }
     }
-    if (!has_json_property($data, 'session_id'))
+    if (!_XML_API::has($data, 'session_id'))
     {
       if (property_exists($this, 'session_id') && isset($this->session_id))
       {

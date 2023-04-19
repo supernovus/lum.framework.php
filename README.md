@@ -4,6 +4,20 @@
 
 Base classes for building applications.
 
+## Plans
+
+(As of `2023-04-14`)
+
+I am going to break this package up into a few smaller packages.
+The exact number of packages and what form they'll take I have not fully
+decided yet, but this is full of outdated cruft that needs pruning.
+
+Additionally there's a bunch of functionality that has been added to some
+of my personal apps that I'm planning to extract into new controller and model
+traits within the new packages.
+
+This package will remain as a compatibility layer for existing apps.
+
 ## Classes
 
 ### General
@@ -127,6 +141,9 @@ The `Users` common trait uses the `Lum\Auth\Simple` authentication class by
 default. This is overridable in child classes.
 
 ## TODO
+
+Everything in this section will be done in the new packages once the split
+mentioned above is complete.
 
 * Add more tests.
 * Refactor the `Lum\Controllers\Resources` trait.

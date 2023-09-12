@@ -59,8 +59,7 @@ abstract class Users extends \Lum\DB\Mongo\Model
     // Look up the user in the database.
     if (isset($column))
     {
-      return $this->user_cache[$ident]
-           = $this->findOne([$column=>$identifier]);
+      return $this->getUserWith($ident, $column, $identifier);
     }
     elseif ($identifier instanceof ObjectId // BSON ObjectId object.
       || is_array($identifier)              // Extended JSON representation.
@@ -69,12 +68,28 @@ abstract class Users extends \Lum\DB\Mongo\Model
       return $this->user_cache[$ident] 
            = $this->getDocById($identifier);
     }
-    else
-    { // Look up by e-mail address.
-      $field = $this->login_field;
-      return $this->user_cache[$ident] 
-           = $this->findOne([$field=>$identifier]);
+    elseif (is_array($this->login_field))
+    { // Try a list of login fields.
+      foreach ($this->login_field as $field)
+      {
+        $user = $this->getUserWith($ident, $field, $identifier);
+        if (isset($user))
+        {
+          return $user;
+        }
+      }
     }
+    elseif (is_string($this->login_field))
+    { // Look up by a single default field.
+      $field = $this->login_field;
+      return $this->getUserWith($ident, $field, $identifier);
+    }
+  }
+
+  protected function getUserWith($ident, $field, $value)
+  {
+    return $this->user_cache[$ident]
+         = $this->findOne([$field=>$value]);
   }
 
   /**

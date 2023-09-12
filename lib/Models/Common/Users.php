@@ -94,6 +94,11 @@ trait Users
     $hfield = $this->hash_field;
     $rfield = $this->reset_field;
 
+    if (is_array($lfield))
+    { // Use the first login field for test.
+      $lfield = $lfield[0];
+    }
+
     if (!isset($rowdef[$lfield]))
       return False; // The login field is required!
 

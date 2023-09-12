@@ -2,6 +2,8 @@
 
 namespace Lum\Controllers;
 
+use Lum\Web\Url as LWU;
+
 trait URL
 {
   /**
@@ -13,7 +15,7 @@ trait URL
    */
   public function redirect ($url, $opts=array()): never
   {
-    \Lum\Plugins\Url::redirect($url, $opts);
+    LWU::redirect($url, $opts);
   }
 
   /**
@@ -23,7 +25,7 @@ trait URL
    */
   public function url ($ssl=Null, $port=Null): string
   {
-    return \Lum\Plugins\Url::site_url($ssl, $port);
+    return LWU::site_url($ssl, $port);
   }
 
   /**
@@ -33,7 +35,7 @@ trait URL
    */
   public function request_uri (): string
   {
-    return \Lum\Plugins\Url::request_uri();
+    return LWU::request_uri();
   }
 
   /**
@@ -43,7 +45,7 @@ trait URL
    */
   public function current_url (): string
   {
-    return \Lum\Plugins\Url::current_url();
+    return LWU::current_url();
   }
 
   /**
@@ -54,7 +56,7 @@ trait URL
    */
   public function download ($file, $opts=[]): never
   {
-    \Lum\Plugins\Url::download($file, $opts);
+    LWU::download($file, $opts);
   }
 
   /**

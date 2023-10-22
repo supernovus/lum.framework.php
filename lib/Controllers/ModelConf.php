@@ -15,7 +15,7 @@ namespace Lum\Controllers;
  */
 trait ModelConf
 {
-  protected $model_opts;    // Options to pass when loading models.
+  protected $model_opts; // Options to pass when loading models.
 
   protected function __construct_modelconf_controller ($opts=[])
   {
@@ -37,7 +37,7 @@ trait ModelConf
    * @param array  $opts  (Optional) The options we are adding to.
    * @return array  The options after populating with the model configuration.
    */
-  protected function populate_model_opts ($model, $opts)
+  protected function populate_model_opts (string $model, $opts)
   { // Load any specific options.
     $opts = $this->get_model_opts($model, $opts, ['defaults'=>true]);
 
@@ -77,11 +77,12 @@ trait ModelConf
     if (isset($behavior['defaults']))
       $use_defaults = $behavior['defaults'];
     else
-      $use_defaults = False;
+      $use_defaults = false;
+    
     if (isset($behavior['types']))
       $build_types = $behavior['types'];
     else
-      $build_types = False;
+      $build_types = false;
 
     $model = strtolower($model); // Force lowercase.
 #    error_log("Looking for model options for '$model'");
@@ -89,48 +90,54 @@ trait ModelConf
     { // We have model options in the controller.
       if (isset($this->model_opts[$model]))
       { // There is model-specific options.
-        $modeltype = Null;
+        $modeltypes = null;
         $modelopts = $this->model_opts[$model];
         if (is_array($modelopts))
         { 
           $opts += $modelopts;
           if (isset($modelopts['.type']))
           {
-            $modeltype = $modelopts['.type'];
+            $modeltypes = $modelopts['.type'];
           }
         }
         elseif (is_string($modelopts))
         {
-          $modeltype = $modelopts;
+          $modeltypes = $modelopts;
           if (!isset($opts['.type']))
           {
-            $opts['.type'] = $modeltype;
+            $opts['.type'] = $modeltypes;
           }
         }
-        if (isset($modeltype))
+        if (isset($modeltypes))
         { 
-          if ($build_types)
-          { // @types keeps track of our nested group hierarchy.
-            if (!isset($opts['@types']))
-            {
-              $opts['@types'] = [$modeltype];
-            }
-            else
-            {
-              $opts['@types'][] = $modeltype;
-            }
-          }
-          // Groups start with a dot.
-          $opts = $this->get_model_opts('.'.$modeltype, $opts);
-          $func = 'get_'.$modeltype.'_model_opts';
-          if (is_callable([$this, $func]))
+          if (!is_array($modeltypes))
+            $modeltypes = [$modeltypes];
+          
+          foreach ($modeltypes as $modeltype)
           {
-#            error_log("  -- Calling $func() to get more options.");
-            $addopts = $this->$func($model, $opts);
-            if (isset($addopts) && is_array($addopts))
+            if ($build_types)
+            { // @types keeps track of our nested group hierarchy.
+              if (!isset($opts['@types']))
+              {
+                $opts['@types'] = [$modeltype];
+              }
+              else
+              {
+                $opts['@types'][] = $modeltype;
+              }
+            }
+            // Groups start with a dot.
+            $opts = $this->get_model_opts('.'.$modeltype, $opts);
+            $func = 'get_'.$modeltype.'_model_opts';
+            if (is_callable([$this, $func]))
             {
-#              error_log("  -- Options were found, adding to our set.");
-              $opts += $addopts;
+  #            error_log("  -- Calling $func() to get more options.");
+              $addopts = $this->$func($model, $opts);
+              if (isset($addopts) && is_array($addopts))
+              {
+  #              error_log("  -- Options were found, adding to our set.");
+                $opts += $addopts;
+              }
             }
           }
         }
@@ -145,8 +152,41 @@ trait ModelConf
   }
 
   /**
+   * Handle a special '.type' called 'conf' which requires an option
+   * called '.conf', which can be a string or array of strings, 
+   * and will include extra options from $core->conf[$conf];
+   */
+  protected function get_conf_model_opts ($model, $opts)
+  {
+    if (isset($opts['.conf']))
+    {
+      $core = \Lum\Core::getInstance();
+      $addopts = [];
+
+      $confs = $opts['.conf'];
+      if (!is_array($confs))
+        $confs = [$confs];
+      
+      foreach ($confs as $conf)
+      {
+        if (isset($core->conf[$conf]))
+        {
+          $addconf = $core->conf[$conf];
+          if (isset($addconf[$model]))
+            $addconf = $addconf[$model];
+          $addopts += $addconf;
+        }
+      }
+
+      return $addopts;
+    }
+  }
+
+  /**
    * Handle a special '.type' called 'db' which will include extra
    * options from $core->conf->db;
+   * 
+   * @deprecated The new 'conf' special type is more flexible.
    */
   protected function get_db_model_opts ($model, $opts)
   {
@@ -187,7 +227,11 @@ trait ModelConf
         else
           $modeltype = $opts['.type'];
 
-        if ($modeltype == $type)
+        if (is_array($modeltype) && in_array($type, $modeltype))
+        {
+          $models[$name] = $opts;
+        }
+        elseif (is_string($modeltype) && $modeltype == $type)
         {
           $models[$name] = $opts;
         }

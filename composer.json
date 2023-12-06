@@ -17,12 +17,12 @@
     "lum/lum-core-plugins": "^1.0",
     "lum/lum-html": "^2.0",
     "lum/lum-uimsg": "^2.0",
-    "lum/lum-db": "^2.0",
+    "lum/lum-db": "^2.3",
     "lum/lum-text": "^2.0"
   },
   "require-dev":
   {
-    "lum/lum-test": "^3.0",
+    "lum/lum-test": "^3.1",
     "ext-PDO": "*"
   },
   "suggest":

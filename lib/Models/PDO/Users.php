@@ -22,6 +22,8 @@ abstract class Users extends \Lum\DB\PDO\Model
 
   protected $user_cache  = [];      // A cache of known users.
 
+  protected $list_users_fields = null;
+
   /**
    * Get a user.
    *
@@ -62,14 +64,29 @@ abstract class Users extends \Lum\DB\PDO\Model
   /**
    * Get a list of users.
    */
-  public function listUsers ($fields=[])
+  public function listUsers ($fields=null, $where=null)
   {
-    if (count($fields) == 0)
-    {
-      $fields[] = $this->primary_key;
-      $fields[] = $this->login_field;
+    if (!isset($fields)) $fields = $this->list_users_fields();
+
+    $select = ['cols'=>$fields];
+    if (isset($where))
+    { // Using a WHERE statement.
+      $select['where'] = $where;
     }
-    return $this->select(['cols'=>$fields]);
+
+    return $this->select($select);
+  }
+
+  protected function list_users_fields(): array
+  {
+    if (is_array($this->list_users_fields))
+    {
+      return $this->list_users_fields;
+    }
+    else
+    {
+      return [$this->primary_key, $this->login_field];
+    }
   }
 
 }

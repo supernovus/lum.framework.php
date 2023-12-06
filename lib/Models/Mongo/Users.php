@@ -16,16 +16,25 @@ use \MongoDB\BSON\ObjectId;
 
 abstract class Users extends \Lum\DB\Mongo\Model
 {
-  use \Lum\Models\Common\Users;
+  use 
+    \Lum\DB\Mongo\GetDoc, 
+    \Lum\Models\Common\Users;
 
   protected $childclass  = '\Lum\Models\Mongo\User';
   protected $resultclass = '\Lum\DB\Mongo\Results';
 
   protected $user_cache  = [];      // A cache of known users.
 
+  // Use the login field for `getDoc()/getUser()` calls.
+  protected $get_doc_fields_property = 'login_field';
+
+  protected $list_users_fields = null;
+
   /**
    * Get a user.
    *
+   * This is now a wrapper around the `getDoc()` method.
+   * 
    * @param Mixed $identifier    Either the numeric primary key,
    *                             or a stringy login field (default 'email')
    *
@@ -35,73 +44,30 @@ abstract class Users extends \Lum\DB\Mongo\Model
    */
   public function getUser($identifier, $column=null)
   {
-    if (is_array($identifier))
-    {
-      $ident = json_encode($identifier);
-    }
-    else
-    {
-      $ident = (string)$identifier;
-    }
-
-    #error_log("getUser($ident, ".json_encode($column).")");
-
-    if (isset($column))
-    {
-      $ident = $column.'_'.$ident;
-    }
-
-    if (isset($this->user_cache[$ident]))
-    { // It's already been cached.
-      return $this->user_cache[$ident];
-    }
-
-    // Look up the user in the database.
-    if (isset($column))
-    {
-      return $this->getUserWith($ident, $column, $identifier);
-    }
-    elseif ($identifier instanceof ObjectId // BSON ObjectId object.
-      || is_array($identifier)              // Extended JSON representation.
-      || ctype_xdigit($identifier))         // An ObjectId string.
-    { // Look up by userId.
-      return $this->user_cache[$ident] 
-           = $this->getDocById($identifier);
-    }
-    elseif (is_array($this->login_field))
-    { // Try a list of login fields.
-      foreach ($this->login_field as $field)
-      {
-        $user = $this->getUserWith($ident, $field, $identifier);
-        if (isset($user))
-        {
-          return $user;
-        }
-      }
-    }
-    elseif (is_string($this->login_field))
-    { // Look up by a single default field.
-      $field = $this->login_field;
-      return $this->getUserWith($ident, $field, $identifier);
-    }
-  }
-
-  protected function getUserWith($ident, $field, $value)
-  {
-    return $this->user_cache[$ident]
-         = $this->findOne([$field=>$value]);
+    return $this->getDoc($identifier, $column);
   }
 
   /**
    * Get a list of users.
    */
-  public function listUsers ($fields=[])
+  public function listUsers ($fields=null, $query=null)
   {
-    if (count($fields) == 0)
+    if (!isset($fields)) $fields = $this->list_users_fields();
+    if (!isset($query))  $query  = [];
+
+    return $this->find($query, ['projection'=>$fields]);
+  }
+
+  protected function list_users_fields(): array
+  {
+    if (is_array($this->list_users_fields))
     {
-      $fields[$this->login_field] = true;
+      return $this->list_users_fields;
     }
-    return $this->find([], ['projection'=>$fields]);
+    else
+    {
+      return [$this->login_field];
+    }
   }
 
 }

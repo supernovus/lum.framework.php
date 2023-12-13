@@ -2,26 +2,15 @@
 
 namespace Lum\Controllers\Output;
 
+use DOMNode,DOMElement,DOMDocument,SimpleXMLElement,SimpleDOM;
+
 trait XML_API
 {
-  use XML;
+  use XML, API;
 
   public function xml_msg ($data, $opts=[])
   {
-    if (!_XML_API::has($data, 'version'))
-    {
-      if (property_exists($this, 'api_version') && isset($this->api_version))
-      {
-        _XML_API::set($data, 'version', $this->api_version);
-      }
-    }
-    if (!_XML_API::has($data, 'session_id'))
-    {
-      if (property_exists($this, 'session_id') && isset($this->session_id))
-      {
-        _XML_API::set($data, 'session_id', $this->session_id);
-      }
-    }
+    $this->api_set_msg(_XML_API::class, $data);
     return $this->send_xml($data, $opts);
   }
 
@@ -29,9 +18,11 @@ trait XML_API
   { // Boolean attribute.
     if (is_null($data))
     {
-      $data = new \SimpleXMLElement('<response/>');
+      $data = _XML_API::response();
     }
-    _XML_API::set($data, 'success', 'success');
+
+    $this->api_set_ok(_XML_API::class, $data, true);
+
     return $this->xml_msg($data, $opts);
   }
 
@@ -41,113 +32,135 @@ trait XML_API
     {
       $errors = [$errors];
     }
+
     if (is_null($data))
     {
-      $data = new \SimpleXMLElement('<response/>');
+      $data = _XML_API::response(true);
     }
-    if (_XML_API::has($data, 'success'))
-    {
-      _XML_API::del($data, 'success');
-    }
-    if ($data instanceof \DOMNode)
-    { // Convert to SimpleXML.
-      $data = simplexml_import_dom($data);
-    }
-    if ($data instanceof \SimpleXMLElement)
-    {
-      $errNode = $data->addChild('errors');
-      foreach ($errors as $errmsg)
+
+    $this->api_set_ok(_XML_API::class, $data, false);
+
+    if (!($data instanceof SimpleDOM))
+    { // Convert it to a SimpleDOM object.
+      $data = SimpleDOM::load($data);
+      if (!isset($data))
       {
-        $errNode->addChild('error', $errmsg);
+        throw new APIException(INVALID_TYPE);
       }
     }
-    else
+    
+    $errNode = $data->addChild($this->api_errname());
+    $errName = $this->api_var('api_error_child_data_name', 'error');
+
+    foreach ($errors as $error)
     {
-      throw new \Exception("invalid XML sent to xml_err()");
+      if ($error instanceof DOMNode || $error instanceof SimpleXMLElement)
+      { // Append DOM/SimpleXML objects directly.
+        $errNode->appendChild($error);
+      }
+      else
+      { // Anything else, assume it is a string, or stringifiable object.
+        $errNode->addChild($errName, $error);
+      }
     }
+
     return $this->xml_msg($data, $opts);
   }
 }
 
 class _XML_API
 {
+  // A default element if nothing valid was passed.
+  static function response($sdom=false)
+  {
+    $xml = '<response/>';
+    return $sdom ? new SimpleDOM($xml) : new SimpleXMLElement($xml);
+  }
+
   static function set ($data, $pname, $pval)
   {
-    if ($data instanceof \SimpleXMLElement)
+    if ($pval === false)
+    { // Unset false attributes.
+      return static::del($data, $pname);
+    }
+    elseif ($pval === true)
+    { // Boolean true attributes the value is the name.
+      $pval = $pname;
+    }
+
+    if ($data instanceof SimpleXMLElement)
     {
       $data[$pname] = $pval;
     }
-    elseif ($data instanceof \DOMElement)
+    elseif ($data instanceof DOMElement)
     {
       $data->setAttribute($pname, $pval);
     }
-    elseif ($data instanceof \DOMDocument)
+    elseif ($data instanceof DOMDocument)
     {
       $data->documentElement->setAttribute($pname, $pval);
     }
     else
     {
-      throw new \Exception("Invalid XML sent to _XML_API::set()");
+      throw new APIException(INVALID_TYPE);
     }
   }
   
   static function get ($data, $pname)
   {
-    if ($data instanceof \SimpleXMLElement)
+    if ($data instanceof SimpleXMLElement)
     {
       return (string)$data[$pname];
     }
-    elseif ($data instanceof \DOMElement)
+    elseif ($data instanceof DOMElement)
     {
       return $data->getAttribute($pname);
     }
-    elseif ($data instanceof \DOMDocument)
+    elseif ($data instanceof DOMDocument)
     {
       return $data->documentElement->getAttribute($pname);
     }
     else
     {
-      throw new \Exception("Invalid XML sent to _XML_API::get()");
+      throw new APIException(INVALID_TYPE);
     }
   }
   
   static function has ($data, $pname)
   {
-    if ($data instanceof \SimpleXMLElement)
+    if ($data instanceof SimpleXMLElement)
     {
       return isset($data[$pname]);
     }
-    elseif ($data instanceof \DOMElement)
+    elseif ($data instanceof DOMElement)
     {
       return $data->hasAttribute($pname);
     }
-    elseif ($data instanceof \DOMDocument)
+    elseif ($data instanceof DOMDocument)
     {
       return $data->documentElement->hasAttribute($pname);
     }
-    else
-    {
-      throw new \Exception("Invalid XML sent to _XML_API::has()");
-    }
+
+    return false;
   }
   
   static function del ($data, $pname)
   {
-    if ($data instanceof \SimpleXMLElement)
+    if ($data instanceof SimpleXMLElement)
     {
       unset($data[$pname]);
     }
-    elseif ($data instanceof \DOMElement)
+    elseif ($data instanceof DOMElement)
     {
       $data->removeAttribute($pname);
     }
-    elseif ($data instanceof \DOMDocument)
+    elseif ($data instanceof DOMDocument)
     {
       $data->documentElement->removeAttribute($pname);
     }
     else
     {
-      throw new \Exception("Invalid XML sent to _XML_API::del()");
+      throw new APIException(INVALID_TYPE);
     }
   }
 

@@ -5,8 +5,14 @@ namespace Lum\Controllers;
 /**
  * Basic controller, Core controller + original set of traits.
  *
- * This may get deprecated and replaced at some point, but for now it
- * still works as a nice basic set of controller features.
+ * @deprecated See `Core` and `Core\*` base classes
+ *
+ * @uses Routes
+ * @uses URL
+ * @uses Uploads
+ * @uses Wrappers
+ * @uses Output\JSON
+ * @uses Output\XML
  */
 abstract class Basic extends Core
 {

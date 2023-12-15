@@ -42,7 +42,7 @@ trait API
 
   protected function api_set_ok(string $class, &$data, bool $value)
   {
-    $ok = $this->api_var('api_ok_property', 'success');
+    $ok = $this->api_var('api_ok_data_name', 'success');
     $class::set($data, $ok, $value);
   }
 

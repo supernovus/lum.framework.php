@@ -4,17 +4,22 @@
 
 A PHP package of foundational components for web apps.
 
-While the package name makes it sound like it's a full framework, it's more
-like a collection of abstract classes and common traits that can be used to
-write your own models and controllers.
+## Notice of Deprecation
 
-## Major Changes Planned
+This package is deprecated, and has been replaced by a more modular set of
+packages instead:
 
-Read the [PLANS](PLANS.md) for the upcoming overhaul of this package.
+* [lum-app](https://github.com/supernovus/lum.app.php)
+* [lum-auth](https://github.com/supernovus/lum.auth.php)
+* [lum-cli](https://github.com/supernovus/lum.cli.php)
 
-## More TODO
+Note that the new libraries may not have the same classes as the old one.
+In order to provide a slightly easier upgrade path, I have added a transitional
+package:
 
-The documentation is out of date and needs a lot of work to refresh.
+* [lum-framework-compat](https://github.com/supernovus/lum.framework-compat.php)
+
+I will eventually archive this package once I've moved all my apps.
 
 ## Official URLs
 

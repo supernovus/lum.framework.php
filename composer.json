@@ -1,6 +1,6 @@
 {
   "name": "lum/lum-framework",
-  "description": "Lum App Framework",
+  "description": "Lum App Framework (meta-package; deprecated)",
   "license": "MIT",
   "authors":
   [
@@ -12,22 +12,20 @@
   ],
   "require":
   {
-    "lum/lum-compat": "^2.6",
-    "lum/lum-core": "^3.0",
-    "lum/lum-core-plugins": "^1.0",
-    "lum/lum-html": "^2.0",
-    "lum/lum-uimsg": "^2.0",
-    "lum/lum-db": "^2.3",
-    "lum/lum-text": "^2.0"
+    "lum/lum-cli": "^1.0",
+    "lum/lum-auth": "^1.0",
+    "lum/lum-app": "^1.0"
   },
   "require-dev":
   {
-    "lum/lum-test": "^3.1",
-    "ext-PDO": "*"
+    "lum/lum-test": "^3.1"
   },
   "suggest":
   {
-    "lum/lum-mailer": "A mail sending plugin for lum-framework."
+    "lum/lum-app-pdo": "Models for PDO/SQL",
+    "lum/lum-app-mongo": "Models for MongoDB",
+    "lum/lum-mailer": "A mail sending helper library.",
+    "lum/lum-framework-compat": "A compatibility layer for old apps."
   },
   "autoload":
   {
@@ -44,7 +42,7 @@
   {
     "branch-alias":
     {
-      "dev-main": "3.x-dev"
+      "dev-main": "4.x-dev"
     }
   }
 }

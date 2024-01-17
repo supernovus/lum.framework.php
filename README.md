@@ -2,24 +2,20 @@
 
 ## Summary
 
-A PHP package of foundational components for web apps.
+A PHP meta-package of foundational components for web apps.
 
-## Notice of Deprecation
+This used to be a standalone collection of libraries, but as of `4.0.0`, 
+all those libraries have been split off into smaller packages.
 
-This package is deprecated, and has been replaced by a more modular set of
-packages instead:
+**This package is deprecated, and will not be updated further.**
+
+## Replacement Packages
 
 * [lum-app](https://github.com/supernovus/lum.app.php)
 * [lum-auth](https://github.com/supernovus/lum.auth.php)
 * [lum-cli](https://github.com/supernovus/lum.cli.php)
 
-Note that the new libraries may not have the same classes as the old one.
-In order to provide a slightly easier upgrade path, I have added a transitional
-package:
-
-* [lum-framework-compat](https://github.com/supernovus/lum.framework-compat.php)
-
-I will eventually archive this package once I've moved all my apps.
+Read the [Upgrade Notes](UPGRADE.md) for details on the transition.
 
 ## Official URLs
 

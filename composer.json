@@ -1,6 +1,6 @@
 {
   "name": "lum/lum-framework",
-  "description": "Lum App Framework (meta-package; deprecated)",
+  "description": "Lum App Framework (meta-package)",
   "license": "MIT",
   "authors":
   [
@@ -13,7 +13,8 @@
   "require":
   {
     "lum/lum-cli": "^1.0",
-    "lum/lum-app": "^1.0"
+    "lum/lum-app": "^1.0",
+    "lum/lum-core-plugins": "^1.0"
   },
   "suggest":
   {

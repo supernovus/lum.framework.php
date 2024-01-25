@@ -7,7 +7,8 @@ A PHP meta-package of foundational components for web apps.
 This used to be a standalone collection of libraries, but as of `4.0.0`, 
 all those libraries have been split off into smaller packages.
 
-**This package is deprecated, and will not be updated further.**
+This package is no longer technically necessary, but I'll keep it around
+for a while as a meta-package of common components for building web apps.
 
 ## Replacement Packages
 
